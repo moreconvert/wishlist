@@ -1,0 +1,168 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: mct-options\n"
+"POT-Creation-Date: 2021-06-22 13:20+0430\n"
+"PO-Revision-Date: 2021-06-22 13:20+0430\n"
+"Last-Translator: \n"
+"Language-Team: More Convert Team\n"
+"Language: fa_IR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n;_x;_ex;_nx;esc_attr__;esc_attr_e;esc_attr_x;"
+"esc_html__;esc_html_e;esc_html_x;_n_noop;_nx_noop;translate_nooped_plural\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: class-mct-admin.php:116
+msgid "No matches found"
+msgstr ""
+
+#: class-mct-admin.php:117
+msgid "Loading failed"
+msgstr ""
+
+#: class-mct-admin.php:118
+msgid "Please enter 1 or more characters"
+msgstr ""
+
+#: class-mct-admin.php:119
+msgid "Please enter %qty% or more characters"
+msgstr ""
+
+#: class-mct-admin.php:120
+msgid "Please delete 1 character"
+msgstr ""
+
+#: class-mct-admin.php:121
+msgid "Please delete %qty% characters"
+msgstr ""
+
+#: class-mct-admin.php:122
+msgid "You can only select 1 item"
+msgstr ""
+
+#: class-mct-admin.php:123
+msgid "You can only select %qty% items"
+msgstr ""
+
+#: class-mct-admin.php:124
+msgid "Loading more results&hellip;"
+msgstr ""
+
+#: class-mct-admin.php:125
+msgid "Searching&hellip;"
+msgstr ""
+
+#: class-mct-fields.php:127
+msgid "Manage Settings"
+msgstr "مدیریت تنظیمات"
+
+#: class-mct-fields.php:139
+msgid "Manage"
+msgstr "مدیریت"
+
+#: class-mct-fields.php:157
+msgid "Back"
+msgstr "بازگشت"
+
+#: class-mct-fields.php:158
+msgid "Save Settings"
+msgstr "ذخیره تنظیمات"
+
+#: fields/add-button.php:34 fields/add-button.php:48 fields/add-button.php:80
+msgid "Text"
+msgstr "عنوان"
+
+#: fields/add-button.php:35 fields/add-button.php:51 fields/add-button.php:83
+#: fields/color-style.php:35 fields/color-style.php:49
+msgid "Background"
+msgstr "پس زمینه"
+
+#: fields/add-button.php:36 fields/add-button.php:54 fields/add-button.php:86
+#: fields/color-style.php:36
+msgid "Background hover"
+msgstr "هاور پس زمینه"
+
+#: fields/add-button.php:37 fields/add-button.php:57 fields/add-button.php:89
+msgid "Text color"
+msgstr "رنگ متن"
+
+#: fields/add-button.php:38 fields/add-button.php:60 fields/add-button.php:92
+msgid "Text hover color"
+msgstr "رنگ هاور متن"
+
+#: fields/add-button.php:39 fields/add-button.php:63 fields/add-button.php:95
+msgid "Button link"
+msgstr "لینک دکمه"
+
+#: fields/add-button.php:40 fields/add-button.php:72 fields/add-button.php:104
+#: fields/importance.php:33 fields/importance.php:46 fields/importance.php:60
+#: fields/repeator.php:43 fields/repeator.php:55 fields/repeator.php:68
+msgid "Action"
+msgstr "فعالیت"
+
+#: fields/add-button.php:69 fields/add-button.php:101
+msgid "Url"
+msgstr "لینک"
+
+#: fields/add-button.php:124
+msgid "Add new button"
+msgstr "افزودن دکمه جدید"
+
+#: fields/color-style.php:33 fields/color-style.php:43
+msgid "Color"
+msgstr "رنگ"
+
+#: fields/color-style.php:34 fields/color-style.php:46
+msgid "Hover color"
+msgstr "رنگ هاور"
+
+#: fields/color-style.php:37 fields/color-style.php:55
+msgid "Border"
+msgstr "حاشیه"
+
+#: fields/color-style.php:38 fields/color-style.php:58
+msgid "Border hover"
+msgstr "هاور حاشیه"
+
+#: fields/color-style.php:52
+msgid "Background Hover"
+msgstr "هاور پس زمینه"
+
+#: fields/copy-text.php:33
+msgid "Copy"
+msgstr "کپی"
+
+#: fields/importance.php:31 fields/importance.php:40 fields/importance.php:54
+msgid "Label"
+msgstr "عنوان"
+
+#: fields/importance.php:32 fields/importance.php:43 fields/importance.php:57
+msgid "Slug"
+msgstr "نامک"
+
+#: fields/importance.php:69
+msgid "Add new"
+msgstr "افزودن"
+
+#: fields/page-select.php:39
+msgid "&mdash; Select a page  &mdash;"
+msgstr "&mdash; انتخاب یک برگه &mdash;"
+
+#: fields/search-product.php:34
+msgid "Search for a product&hellip;"
+msgstr ""
+
+#: fields/upload-image.php:42
+msgid "Add Image"
+msgstr "افزودن عکس"
+
+#~ msgid "Label color"
+#~ msgstr "رنگ عنوان"
+
+#~ msgid "Label hover color"
+#~ msgstr "رنگ هاور عنوان"
