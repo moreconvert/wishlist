@@ -1,6 +1,6 @@
 === Smart Wishlist For More Convert ===
 
-Contributors: MoreConvert
+Contributors: https://MoreConvert.com
 Tags: wishlist, woocommerce, products, themes, moreconvert, e-commerce, shop
 Requires at least: 5.3
 Tested up to: 5.7.2
