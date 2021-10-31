@@ -88,6 +88,72 @@ jQuery(function ($) {
 			}
 		);
 
+	$(document.body).on('click', '.wlfmc-built-wishlist-page:not(.disabled)', function (e) {
+		e.preventDefault();
+		var elem = $(this), oldtext = elem.text();
+
+		elem.addClass('disabled');
+		elem.text(wlfmc_wishlist_admin.i18n_making_page);
+
+		$.ajax({
+			url: wlfmc_wishlist_admin.ajax_url,
+			data: {
+				action: 'wlfmc_create_wishlist_page',
+				key: wlfmc_wishlist_admin.ajax_nonce,
+			},
+			dataType: 'json',
+			method: 'POST',
+			success: function (data) {
+				if (data && data.success) {
+					location.reload(true);;
+				}
+			},
+			error: function () {
+				console.log(
+					'We cant create page. Something wrong with AJAX response. Probably some PHP conflict.');
+			},
+			complete: function () {
+				elem.removeClass('disabled');
+				elem.text(oldtext);
+			}
+		});
+
+		return false;
+	});
+	$(document.body).on('click', '.wlfmc-send-offer-email-test', function (e) {
+		e.preventDefault();
+		var elem = $(this), oldtext = elem.text();
+
+		elem.addClass('disabled');
+		elem.text(wlfmc_wishlist_admin.i18n_sending);
+
+		$.ajax({
+			url: wlfmc_wishlist_admin.ajax_url,
+			data: {
+				id :elem.data('id'),
+				field:elem.data('field'),
+				action: 'wlfmc_send_offer_email_test',
+				key: wlfmc_wishlist_admin.ajax_nonce,
+			},
+			dataType: 'json',
+			method: 'POST',
+			success: function (data) {
+				if(data && data.message)
+					showSnack(data.message);
+			},
+			error: function () {
+				console.log(
+					'We cant Send email. Something wrong with AJAX response. Probably some PHP conflict.');
+			},
+			complete: function () {
+				elem.removeClass('disabled');
+				elem.text(oldtext);
+			}
+		});
+
+		return false;
+	})
+
 	function showSnack(error) {
 		var x = document.getElementById("snackbar");
 		x.innerHTML = error;

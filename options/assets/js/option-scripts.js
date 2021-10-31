@@ -7,7 +7,7 @@
 
         $('.mct-repeater').repeater(
             {
-
+				limitMessage  : mct_admin_parasm.i18n_limit_repeator_alert,
                 show: function () {
                     $(this).slideDown();
 
@@ -20,7 +20,7 @@
                     init_repeator_dependencies();
                 },
                 hide: function (deleteElement) {
-                    if (confirm('Are you sure you want to delete this element?')) {
+                    if (confirm(mct_admin_parasm.i18n_delete_repeator_confirm)) {
 
                         $(this).slideUp(deleteElement);
 
@@ -76,13 +76,14 @@
             $('.mct-section-wrapper').show();
         });
 
-        $('body').on('click', '.mct-tabs a', function (event) {
+        $('body').on('click', '.mct-tabs a:not(.external-link)', function (event) {
             event.preventDefault();
             $(this).closest('.mct-section-content').find('.mct-tab-content').hide();
             $(this).closest('.mct-section-content').find('.mct-tabs a').removeClass('nav-tab-active');
             $(this).addClass('nav-tab-active');
             $($(this).attr('href')).show();
             window.history.replaceState('', '', updateURLParameter(window.location.href, "tab", $(this).attr('href')));
+      		return false;
         });
 
         $('body').on('click', '.mct-copy-btn', function (event) {
@@ -91,6 +92,26 @@
             textBox.select();
             document.execCommand("copy");
         });
+
+        $('body').on('click','.show-manage-item', function(event){
+			event.preventDefault();
+			$('.mct-manage-item').hide();
+			$($(this).attr('href')).closest('.mct-tab-content').find('> .form-table').hide();
+			$($(this).attr('href')).closest('.mct-tab-content').find('> .mct-article').hide();
+			$($(this).attr('href')).show();
+
+		});
+		$('body').on('click','.back-manage-item', function(event){
+			event.preventDefault();
+			$(this).closest('.mct-tab-content').find('> .form-table').show();
+			$(this).closest('.mct-tab-content').find('> .mct-article').show();
+			$('.mct-manage-item').hide();
+			init_dependencies();
+			init_section_dependencies();
+			init_repeator_dependencies();
+			init_manage_dependencies();
+			return false;
+		});
 
         function updateURLParameter(url, param, paramVal) {
             var newAdditionalURL = "";
@@ -199,8 +220,30 @@
             });
         }
 
-        function init_dependencies() {
-            $('[data-deps]:not( .deps-initialized )').each(function () {
+		function init_manage_dependencies() {
+			$('[data-mngdeps]:not( .deps-initialized )').each(function () {
+				var t = $(this);
+				var field = t.closest('.row-options');
+				// init field deps
+				t.addClass('deps-initialized');
+
+				var deps = '#' + t.data('mngdeps'),
+					value = t.data('deps-value'),
+					wrapper = t.closest('.row-options');
+
+				$(deps).on('change', function () {
+					var showing = dependencies_handler(deps, value.toString());
+					if (showing) {
+						field.show(300);
+					} else {
+						field.hide(300);
+					}
+				}).trigger('change');
+			});
+		}
+
+		function init_dependencies() {
+            $('[data-deps]:not( .deps-initialized, .mct-article )').each(function () {
                 var t = $(this),
                     field = t.closest('.row-options'),
                     items = $.isArray(t.data('deps')) ? t.data('deps') : [t.data('deps')];
@@ -227,7 +270,36 @@
             });
         }
 
+        function init_section_dependencies() {
+            $('.mct-article[data-deps]:not( .deps-initialized )').each(function () {
+                var t = $(this),
+                    items = $.isArray(t.data('deps')) ? t.data('deps') : [t.data('deps')];
+
+                // init field deps
+                t.addClass('deps-initialized');
+                $.each(items, function (index, data) {
+
+                    $('#' + data.id).on('change', function () {
+                        var showing = true;
+                        $.each(items, function (i, d) {
+                            showing = (true === dependencies_handler('#' + d.id, d.value) && showing);
+                        });
+                        if (showing) {
+                            t.fadeIn(300);
+                        } else {
+                            t.fadeOut(300);
+                        }
+
+                    }).trigger('change');
+
+                });
+            });
+        }
+
         init_dependencies();
+        init_section_dependencies();
         init_repeator_dependencies();
+		init_manage_dependencies();
+
     });
 })(jQuery);

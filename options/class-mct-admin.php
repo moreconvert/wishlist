@@ -4,7 +4,7 @@
  *
  * @author MoreConvert
  * @package MoreConvert Options plugin
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,7 +30,7 @@ if ( ! class_exists( 'MCT_Admin' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '1.0.0';
+		public $version = '1.1.0';
 
 		/**
 		 * Options
@@ -70,6 +70,8 @@ if ( ! class_exists( 'MCT_Admin' ) ) {
 
 		/**
 		 * Enqueue admin style and js
+		 *
+		 * @version 1.1.0
 		 */
 		public function enqueue_admin_js() {
 
@@ -113,27 +115,27 @@ if ( ! class_exists( 'MCT_Admin' ) ) {
 							'wc-enhanced-select',
 							'wc_enhanced_select_params',
 							array(
-								'i18n_no_matches'         => _x( 'No matches found', 'enhanced select', 'woocommerce' ),
-								'i18n_ajax_error'         => _x( 'Loading failed', 'enhanced select', 'woocommerce' ),
-								'i18n_input_too_short_1'  => _x( 'Please enter 1 or more characters', 'enhanced select', 'woocommerce' ),
-								'i18n_input_too_short_n'  => _x( 'Please enter %qty% or more characters', 'enhanced select', 'woocommerce' ),
-								'i18n_input_too_long_1'   => _x( 'Please delete 1 character', 'enhanced select', 'woocommerce' ),
-								'i18n_input_too_long_n'   => _x( 'Please delete %qty% characters', 'enhanced select', 'woocommerce' ),
+								'i18n_no_matches'           => _x( 'No matches found', 'enhanced select', 'woocommerce' ),
+								'i18n_ajax_error'           => _x( 'Loading failed', 'enhanced select', 'woocommerce' ),
+								'i18n_input_too_short_1'    => _x( 'Please enter 1 or more characters', 'enhanced select', 'woocommerce' ),
+								'i18n_input_too_short_n'    => _x( 'Please enter %qty% or more characters', 'enhanced select', 'woocommerce' ),
+								'i18n_input_too_long_1'     => _x( 'Please delete 1 character', 'enhanced select', 'woocommerce' ),
+								'i18n_input_too_long_n'     => _x( 'Please delete %qty% characters', 'enhanced select', 'woocommerce' ),
 								'i18n_selection_too_long_1' => _x( 'You can only select 1 item', 'enhanced select', 'woocommerce' ),
 								'i18n_selection_too_long_n' => _x( 'You can only select %qty% items', 'enhanced select', 'woocommerce' ),
-								'i18n_load_more'          => _x( 'Loading more results&hellip;', 'enhanced select', 'woocommerce' ),
-								'i18n_searching'          => _x( 'Searching&hellip;', 'enhanced select', 'woocommerce' ),
-								'ajax_url'                => admin_url( 'admin-ajax.php' ),
-								'search_products_nonce'   => wp_create_nonce( 'search-products' ),
-								'search_customers_nonce'  => wp_create_nonce( 'search-customers' ),
-								'search_categories_nonce' => wp_create_nonce( 'search-categories' ),
+								'i18n_load_more'            => _x( 'Loading more results&hellip;', 'enhanced select', 'woocommerce' ),
+								'i18n_searching'            => _x( 'Searching&hellip;', 'enhanced select', 'woocommerce' ),
+								'ajax_url'                  => admin_url( 'admin-ajax.php' ),
+								'search_products_nonce'     => wp_create_nonce( 'search-products' ),
+								'search_customers_nonce'    => wp_create_nonce( 'search-customers' ),
+								'search_categories_nonce'   => wp_create_nonce( 'search-categories' ),
 							)
 						);
 					}
 				} else {
 					if ( ! wp_style_is( 'select2', 'registered' ) ) {
 
-						wp_register_style( 'select2', MCT_OPTION_PLUGIN_URL . '/assets/css/select2.css', array(), WC()->version );
+						wp_register_style( 'select2', MCT_OPTION_PLUGIN_URL . '/assets/css/select2.css', array(), $this->version );
 					}
 					if ( ! wp_script_is( 'select2', 'registered' ) ) {
 
@@ -144,8 +146,14 @@ if ( ! class_exists( 'MCT_Admin' ) ) {
 
 				wp_enqueue_script( 'mct-repeator', MCT_OPTION_PLUGIN_URL . '/assets/js/repeator.js', array( 'jquery' ), $this->version, true );
 
-				wp_enqueue_script( 'mct-admin', MCT_OPTION_PLUGIN_URL . '/assets/js/option-scripts.js', array( 'jquery' ), $this->version, true );
+				wp_register_script( 'mct-admin', MCT_OPTION_PLUGIN_URL . '/assets/js/option-scripts.js', array( 'jquery' ), $this->version, true );
 
+				wp_localize_script( 'mct-admin', 'mct_admin_parasm', array(
+					'i18n_limit_repeator_alert'    => __( 'You can not add more items.', 'mct-options' ),
+					'i18n_delete_repeator_confirm' => __( 'Are you sure you want to delete this element?', 'mct-options' ),
+
+				) );
+				wp_enqueue_script( 'mct-admin' );
 				wp_enqueue_style( 'mct-admin', MCT_OPTION_PLUGIN_URL . '/assets/css/option-style.css', array(), $this->version );
 			}
 		}
@@ -155,17 +163,17 @@ if ( ! class_exists( 'MCT_Admin' ) ) {
 		 * Save wishlist options
 		 *
 		 * @return void
+		 * @version 1.1.0
 		 */
 		public function save_option() {
 
 			if ( isset( $_POST['mct-action'] ) ) {
 
-				if ( isset( $this->options['sections'] ) && is_array( $this->options['sections'] ) ) {
+				if ( isset( $this->options['options'] ) && is_array( $this->options['options'] ) ) {
 
 					$options       = $this->get_main_key_options();
 					$saved_options = $this->get_options();
-
-					foreach ( $this->options['sections'] as $section => $title ) {
+					foreach ( $this->options['options'] as $section => $items ) {
 
 						if ( $_POST['mct-action'] === $section && isset( $_POST[ 'mct-' . $section . '-nonce' ] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_POST[ 'mct-' . $section . '-nonce' ] ) ), 'mct-' . $section ) ) {
 
@@ -173,6 +181,8 @@ if ( ! class_exists( 'MCT_Admin' ) ) {
 
 							do_action( 'mct_panel_before_' . $this->options['id'] . '_update' );
 							foreach ( $options[ $section ] as $name => $value ) {
+
+								do_action( 'mct_panel_' . $this->options['id'] . '_item_' . $value );
 
 								$new_options[ $value ] = isset( $_POST[ $value ] ) ? wp_unslash( $_POST[ $value ] ) : ''; // phpcs:ignore WordPress.Security
 
@@ -216,18 +226,77 @@ if ( ! class_exists( 'MCT_Admin' ) ) {
 		 * return an array with all key options
 		 *
 		 * @return array
+		 * @version 1.1.0
 		 */
-		public function get_main_key_options() {
+		public function get_main_key_options_old() {
 			$all_fields = array();
 			if ( is_array( $this->options['options'] ) ) {
 				foreach ( $this->options['options'] as $section => $value ) {
 					if ( isset( $value['tabs'] ) ) {
 						$section_fields = array();
 						foreach ( $value['tabs'] as $tab => $fields ) {
-							$section_fields = array_merge( $section_fields, array_keys( $this->options['options'][ $section ]['fields'][ $tab ] ) );
+
+							foreach ( $this->options['options'][ $section ]['fields'][ $tab ] as $k => $v ) {
+								if ( isset( $v['type'] ) && $v['type'] === 'manage' ) {
+
+
+									$section_fields = array_merge( $section_fields, array_keys( $v['fields'] ) );
+
+
+								} else {
+									$section_fields = array_merge( $section_fields, $k );
+								}
+							}
+
 						}
 					} else {
-						$section_fields = array_keys( $value );
+						$section_fields = array();
+						foreach ( $value['fields'] as $k => $v ) {
+							if ( isset( $v['type'] ) && $v['type'] === 'manage' ) {
+								$section_fields = array_merge( $section_fields, array_keys( $v['fields'] ) );
+							} else {
+								$section_fields = array_merge( $section_fields, $k );
+							}
+						}
+
+					}
+					$all_fields[ $section ] = $section_fields;
+				}
+			}
+
+			return $all_fields;
+		}
+
+		public function get_main_key_options() {
+			$all_fields = array();
+			if ( is_array( $this->options['options'] ) ) {
+				foreach ( $this->options['options'] as $section => $value ) {
+					$section_fields = array();
+					if ( isset( $value['tabs'] ) ) {
+						foreach ( $value['tabs'] as $tab => $fields ) {
+							//$section_fields = array_merge( $section_fields, array_keys( $this->options['options'][ $section ]['fields'][ $tab ] ) );
+
+							foreach ( $this->options['options'][ $section ]['fields'][ $tab ] as $k => $v ) {
+
+
+								if ( isset( $v['type'] ) && ! in_array( $v['type'], array( 'start', 'end' ) ) ) {
+
+									$section_fields[] = $k;
+								}
+							}
+						}
+					} else {
+						foreach ( $value['fields'] as $k => $v ) {
+							/*if ( isset( $v['type'] ) && $v['type'] === 'article' ) {
+								$section_fields = array_merge( $section_fields, array_keys( $v['fields'] ) );
+							} else {*/
+
+							if ( isset( $v['type'] ) && ! in_array( $v['type'], array( 'start', 'end' ) ) ) {
+								$section_fields[] = $k;
+							}
+							//}
+						}
+
 					}
 					$all_fields[ $section ] = $section_fields;
 				}

@@ -47,6 +47,9 @@
 .mct-options .space-between {
 	justify-content: space-between;
 }
+.mct-options .f-center {
+	align-items: center;
+}
 
 .mct-options .table-title {
 	margin-top: 30px;
@@ -54,7 +57,7 @@
 }
 
 .mct-options .postbox {
-	margin-top: 20px;
+	margin: 10px 0 0 !important;
 }
 
 
@@ -148,10 +151,11 @@
 	line-height: 1.3;
 	vertical-align: middle;
 }
-
-.mct-border-table td:last-child {
+.mct-border-table td.td-action {
+	width: 40px;
 	text-align: center;
 }
+
 
 @media (max-width: 782px) {
 	.mct-border-table td, .mct-border-table th {
@@ -197,6 +201,9 @@
 	font-weight: 600;
 }
 
+.mct-options  textarea.resizeable {
+	resize:both !important;
+}
 .mct-repeater-block textarea {
 	resize: both !important;
 }
@@ -209,4 +216,11 @@
 	left: auto !important;
 	right: 6px;
 	text-align: right !important;
+}
+
+table.mct-manages  tbody tr td:last-child{
+	text-align: right;
+}
+.rtl table.mct-manages  tbody tr td:last-child{
+	text-align: left;
 }

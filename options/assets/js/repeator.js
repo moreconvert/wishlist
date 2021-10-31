@@ -985,7 +985,20 @@
 			};
 
 			$filterNested($self.find('[data-repeater-create]'), fig.repeaters).click(function () {
-				addItem();
+
+				var limit = $self.data('limit'),
+					length = $items().length;
+				if(limit && parseInt(limit) > 0 ){
+					if(length < limit ){
+						addItem();
+					}else{
+						alert(fig.limitMessage);
+					}
+				}else {
+					addItem();
+				}
+
+
 			});
 
 			$list.on('click', '[data-repeater-delete]', function () {

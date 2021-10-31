@@ -3,7 +3,7 @@
  * Offer email class
  * @author MoreConvert
  * @package Smart Wishlist For More Convert
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,6 +42,8 @@ if ( ! class_exists( 'WLFMC_Offer_Emails' ) ) {
 		 * @param $prod_id
 		 * @param $wishlist_id
 		 * @param $user_id
+		 *
+		 * @version 1.0.1
 		 */
 		public function add_emails( $prod_id, $wishlist_id, $user_id ) {
 
@@ -80,7 +82,11 @@ if ( ! class_exists( 'WLFMC_Offer_Emails' ) ) {
 				foreach ( $include_products as $product_id ) {
 					$product_id = wlfmc_object_id( $product_id, 'product', true, 'default' );
 
-					if ( array_key_exists( $product_id, $wishlist->get_items() ) ) {
+					/*if ( array_key_exists( $product_id, $wishlist->get_items() ) ) {
+						$exists = true;
+						break;
+					}*/
+					if ( $product_id === $prod_id ) {
 						$exists = true;
 						break;
 					}
@@ -95,7 +101,7 @@ if ( ! class_exists( 'WLFMC_Offer_Emails' ) ) {
 
 			foreach ( $offer_emails as $email_option ) {
 				if ( ( '1' == $email_option['enable_email'] ) &&
-				     ( 'after-days' === $email_option['send_mail_type'] && intval( $email_option['send_after_days'] ) > 0 ) &&
+				     ( intval( $email_option['send_after_days'] ) > 0 ) &&
 				     ( ( 'plain' === $email_option['mail_type'] && wlfmc_str_contains( $email_option['text_content'], '{coupon_code}' ) ) || ( 'html' === $email_option['mail_type'] && wlfmc_str_contains( $email_option['html_content'], '{coupon_code}' ) ) )
 				) {
 					$most_days = intval( $email_option['send_after_days'] ) > $most_days ? intval( $email_option['send_after_days'] ) : $most_days;
@@ -127,7 +133,7 @@ if ( ! class_exists( 'WLFMC_Offer_Emails' ) ) {
 			foreach ( $offer_emails as $email_option ) {
 				if ( '1' == $email_option['enable_email'] ) {
 
-					$days       = 'after-days' === $email_option['send_mail_type'] ? intval( $email_option['send_after_days'] ) : 0;
+					$days       = intval( $email_option['send_after_days'] );
 					$datesend   = $days > 0 ? strtotime( '+' . $days . ' days', $current_time ) : $current_time;
 					$has_coupon = ( ( 'plain' === $email_option['mail_type'] && wlfmc_str_contains( $email_option['text_content'], '{coupon_code}' ) ) || ( 'html' === $email_option['mail_type'] && wlfmc_str_contains( $email_option['html_content'], '{coupon_code}' ) ) ) ? 1 : 0;
 					$this->insert_email( array(
@@ -135,6 +141,8 @@ if ( ! class_exists( 'WLFMC_Offer_Emails' ) ) {
 						'wishlist_id'   => $wishlist_id,
 						'has_coupon'    => $has_coupon,
 						'coupon_id'     => $coupon_id,
+						'product_id'    => $prod_id,
+						'days'          => $days,
 						'email_options' => array(
 							'mail_type'    => $email_option['mail_type'],
 							'mail_heading' => $email_option['mail_heading'],
@@ -182,7 +190,7 @@ if ( ! class_exists( 'WLFMC_Offer_Emails' ) ) {
 					$template     = 'plain/offer.php';
 					break;
 			}
-			$headers = "Content-Type: $content_type}\r\n";
+			$headers = "Content-Type: {$content_type}\r\n";
 
 			if ( 1 == $email_row->has_coupon ) {
 				$coupon_object = new WC_Coupon( $email_row->coupon_id );
@@ -204,16 +212,18 @@ if ( ! class_exists( 'WLFMC_Offer_Emails' ) ) {
 			), $wishlist_url );
 
 			$placeholders  = array(
-				'{user_name}'       => $user->user_login,
-				'{user_email}'      => $user->user_email,
-				'{user_first_name}' => $user->first_name,
-				'{user_last_name}'  => $user->last_name,
-				'{coupon_code}'     => $coupon_code,
-				'{coupon_amount}'   => $coupon_amount,
-				'{expiry_date}'     => $coupon_expiry_date,
-				'{shop_url}'        => esc_url( $shop_url ),
-				'{checkout_url}'    => esc_url( $checkout_url ),
-				'{wishlist_url}'    => esc_url( $wishlist_url ),
+				'{user_name}'        => $user->user_login,
+				'{user_email}'       => $user->user_email,
+				'{user_first_name}'  => $user->first_name,
+				'{user_last_name}'   => $user->last_name,
+				'{coupon_code}'      => $coupon_code,
+				'{coupon_amount}'    => $coupon_amount,
+				'{expiry_date}'      => $coupon_expiry_date,
+				'{shop_url}'         => esc_url( $shop_url ),
+				'{checkout_url}'     => esc_url( $checkout_url ),
+				'{wishlist_url}'     => esc_url( $wishlist_url ),
+				'{site_name}'        => get_bloginfo( 'name' ),
+				'{site_description}' => get_bloginfo( 'description' ),
 			);
 			$email_content = str_replace( array_keys( $placeholders ), array_values( $placeholders ), $email_content );
 
@@ -231,7 +241,14 @@ if ( ! class_exists( 'WLFMC_Offer_Emails' ) ) {
 				'email_content' => apply_filters( 'wlfmc_offer_email_content', $email_content )
 			), true );
 
+
+			add_filter( 'woocommerce_email_from_name', array( $this, 'get_from_name' ), 10 );
+			add_filter( 'woocommerce_email_from_address', array( $this, 'get_from_address' ), 10 );
+
 			$send_state = $mailer->send( $to, apply_filters( 'wlfmc_offer_email_subject', $email_subject ), $message, $headers, '' );
+
+			remove_filter( 'woocommerce_email_from_name', array( $this, 'get_from_name' ), 10 );
+			remove_filter( 'woocommerce_email_from_address', array( $this, 'get_from_address' ), 10 );
 
 			if ( $send_state ) {
 				$this->set_sent( $email_row->ID );
@@ -242,11 +259,46 @@ if ( ! class_exists( 'WLFMC_Offer_Emails' ) ) {
 		}
 
 		/**
+		 *  Get from name for email.
+		 *
+		 * @param $default
+		 *
+		 * @return string
+		 *
+		 * @since 1.0.1
+		 */
+		public function get_from_name( $default ) {
+
+			$options = new MCT_Options( 'wlfmc_options' );
+
+			return $options->get_option( 'email-from-name', $default );
+
+		}
+
+		/**
+		 *  Get from address for email.
+		 *
+		 * @param $default
+		 *
+		 * @return string
+		 *
+		 * @since 1.0.1
+		 */
+		public function get_from_address( $default ) {
+
+			$options = new MCT_Options( 'wlfmc_options' );
+
+			return $options->get_option( 'email-from-address', $default );
+
+		}
+
+		/**
 		 * insert Email to DB
 		 *
 		 * @param $args
 		 *
 		 * @return mixed
+		 * @version 1.0.1
 		 */
 		public function insert_email( $args ) {
 			global $wpdb;
@@ -258,16 +310,20 @@ if ( ! class_exists( 'WLFMC_Offer_Emails' ) ) {
 					'wishlist_id'   => $args['wishlist_id'],
 					'has_coupon'    => $args['has_coupon'],
 					'coupon_id'     => $args['coupon_id'],
+					'product_id'    => $args['product_id'],
 					'email_options' => serialize( $args['email_options'] ),
 					'datesend'      => $args['datesend'],
+					'days'          => $args['days'],
 				),
 				array(
 					'%d',
 					'%d',
 					'%d',
 					'%d',
+					'%d',
 					'%s',
-					'%s'
+					'%s',
+					'%d',
 				)
 			);
 
@@ -473,6 +529,23 @@ if ( ! class_exists( 'WLFMC_Offer_Emails' ) ) {
 		}
 
 		/**
+		 * Get count email offer in queue by days
+		 *
+		 * @param int $days
+		 *
+		 * @return int
+		 *
+		 * @version 1.0.1
+		 * @since 1.0.1
+		 */
+		public function get_count_send_queue_by_days( $days = 0 ) {
+			global $wpdb;
+
+			return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(ID) FROM {$wpdb->wlfmc_offers} WHERE days=%s AND is_sent = 0 ", $days ) );
+		}
+
+
+		/**
 		 * get email queues
 		 *
 		 * @param $limit
@@ -529,7 +602,7 @@ So finalize your purchase?
 
 Thanks so much for your attention
 Regards,
-your website name',
+{site_name}',
 							'wc-wlfmc-wishlist'
 						);
 					} else {
@@ -547,7 +620,7 @@ Would it be helpful if we send you the wishlist link? </p>
 <br>
 <p>Thanks so much for your attention</p>
 <p>Regards,</p>
-<p>your website name</p>
+<p>{site_name}</p>
 ',
 							'wc-wlfmc-wishlist'
 						);
@@ -568,7 +641,7 @@ Remember to use this discount code at the checkout and it\'s valid until {expiry
 Please let us know if you need any assistance. Hope you like the deal!
 
 Best,
-employee name, your website name',
+employee name, {site_name}',
 							'wc-wlfmc-wishlist'
 						);
 					} else {
@@ -585,7 +658,7 @@ employee name, your website name',
 <p>Please let us know if you need any assistance. Hope you like the deal!</p>
 <br>
 <p>Best,</p>
-<p>employee name, your website name</p>
+<p>employee name, {site_name}</p>
 ',
 							'wc-wlfmc-wishlist'
 						);

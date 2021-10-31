@@ -37,7 +37,19 @@ $mct_fields = new MCT_Fields();
 		<tr>
 			<?php
 			foreach ( $repeator_fields as $field_key => $field_value ) {
-				echo '<th>' . esc_attr( $field_value['label'] ) . '</th>';
+				?>
+				<th>
+					<?php echo esc_attr( $field_value['label'] ) ;?>
+					<?php if( isset( $field_value['help'] ) &&  ! empty( $field_value['help'] ) ): ?>
+						<!-- MCT Help Tip -->
+						<div class="mct-help-tip-wrap">
+							<span class="mct-help-tip-dec">
+								<?php echo esc_attr( $field_value['help'] ); ?>
+							</span>
+						</div>
+					<?php endif; ?>
+				</th>
+				<?php
 			}
 			?>
 			<th><?php esc_attr_e( 'Action', 'mct-options' ); ?></th>

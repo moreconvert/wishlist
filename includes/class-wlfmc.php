@@ -4,7 +4,7 @@
  *
  * @author MoreConvert
  * @package Smart Wishlist For More Convert
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,14 +27,14 @@ if ( ! class_exists( 'WLFMC' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '1.0.0';
+		public $version = '1.0.1';
 
 		/**
 		 * Plugin database version
 		 *
 		 * @var string
 		 */
-		public $db_version = '1.0.0';
+		public $db_version = '1.0.1';
 
 		/**
 		 * Store class WLFMC_Install.
@@ -73,6 +73,8 @@ if ( ! class_exists( 'WLFMC' ) ) {
 
 		/**
 		 * Constructor.
+		 *
+		 * @version 1.0.1
 		 */
 		public function __construct() {
 
@@ -91,8 +93,13 @@ if ( ! class_exists( 'WLFMC' ) ) {
 			$this->wlfmc_cron = WLFMC_Cron();
 			// init session.
 			$this->wlfmc_session = WLFMC_Session();
+
+			if( class_exists('\Elementor\Plugin') ) {
+				$this->wlfmc_elementor = WLFMC_Elementor();
+			}
+
 			// init admin handling.
-			if ( is_admin() ) {
+			if ( is_admin()  ) {
 				$this->wlfmc_admin = WLFMC_Admin();
 			}
 			// add rewrite rule.
@@ -102,8 +109,6 @@ if ( ! class_exists( 'WLFMC' ) ) {
 			// Polylang integration.
 			add_filter( 'pll_translation_url', array( $this, 'get_pll_wishlist_url' ), 10, 1 );
 		}
-
-
 
 		/* === ITEMS METHODS === */
 
