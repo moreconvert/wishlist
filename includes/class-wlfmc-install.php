@@ -4,7 +4,7 @@
  *
  * @author MoreConvert
  * @package Smart Wishlist For More Convert
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -122,12 +122,15 @@ if ( ! class_exists( 'WLFMC_Install' ) ) {
 		 *
 		 * @return void
 		 * @access private
+		 *
+		 * @version 1.0.1
 		 */
 		private function _add_tables() {
-			$this->_add_wishlists_table();
-			$this->_add_items_table();
-			$this->_add_offer_table();
-
+			if ( ! $this->is_installed() ) {
+				$this->_add_wishlists_table();
+				$this->_add_items_table();
+				$this->_add_offer_table();
+			}
 		}
 
 		/**
@@ -138,8 +141,8 @@ if ( ! class_exists( 'WLFMC_Install' ) ) {
 		 */
 		private function _add_wishlists_table() {
 
-			if ( ! $this->is_installed() ) {
-				$sql = "CREATE TABLE {$this->_table_wishlists} (
+
+			$sql = "CREATE TABLE {$this->_table_wishlists} (
 							ID BIGINT( 20 ) NOT NULL AUTO_INCREMENT,
 							user_id BIGINT( 20 ) NULL DEFAULT NULL,
 							session_id VARCHAR( 255 ) DEFAULT NULL,
@@ -154,9 +157,8 @@ if ( ! class_exists( 'WLFMC_Install' ) ) {
 							KEY wishlist_slug ( wishlist_slug )
 						) DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
 
-				require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-				dbDelta( $sql );
-			}
+			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+			dbDelta( $sql );
 
 			return;
 		}
@@ -169,8 +171,8 @@ if ( ! class_exists( 'WLFMC_Install' ) ) {
 		 */
 		private function _add_items_table() {
 
-			if ( ! $this->is_installed() ) {
-				$sql = "CREATE TABLE {$this->_table_items} (
+
+			$sql = "CREATE TABLE {$this->_table_items} (
 							ID BIGINT( 20 ) NOT NULL AUTO_INCREMENT,
 							prod_id BIGINT( 20 ) NOT NULL,
 							quantity INT( 11 ) NOT NULL,
@@ -187,9 +189,8 @@ if ( ! class_exists( 'WLFMC_Install' ) ) {
 							KEY prod_id ( prod_id )
 						) DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
 
-				require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-				dbDelta( $sql );
-			}
+			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+			dbDelta( $sql );
 
 			return;
 		}
@@ -199,17 +200,23 @@ if ( ! class_exists( 'WLFMC_Install' ) ) {
 		 *
 		 * @return void
 		 * @access private
+		 *
+		 * @since 1.0.0
+		 *
+		 * @version 1.0.1
 		 */
 		private function _add_offer_table() {
 
-			if ( ! $this->is_installed() ) {
-				$sql = "CREATE TABLE {$this->_table_offers} (
+
+			$sql = "CREATE TABLE {$this->_table_offers} (
 							ID BIGINT( 20 ) NOT NULL AUTO_INCREMENT,
 							user_id BIGINT( 20 ) NULL DEFAULT NULL,
 							wishlist_id BIGINT( 20 ) NULL,
 							has_coupon  TINYINT( 1 ) NOT NULL DEFAULT 0,
 							coupon_id BIGINT( 20 ) NULL,
+							product_id BIGINT( 20 ) NULL,
 							email_options LONGTEXT,
+							days SMALLINT( 3 ) NULL DEFAULT 0,
 							dateadded timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 							datesend timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 							datesent timestamp NULL  ON UPDATE CURRENT_TIMESTAMP,
@@ -217,13 +224,46 @@ if ( ! class_exists( 'WLFMC_Install' ) ) {
 							PRIMARY KEY  ( ID )
 						) DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
 
-				require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-				dbDelta( $sql );
-			}
+			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+			dbDelta( $sql );
+
 
 			return;
 		}
 
+		/**
+		 * Update db structure of the plugin
+		 *
+		 * @param string $current_version Version from which we're updating.
+		 *
+		 * @since 1.0.1
+		 */
+		public function update( $current_version ) {
+			if ( version_compare( $current_version, '1.0.1', '<' ) ) {
+				$this->_update_1_0_1();
+			}
+
+			$this->register_current_version();
+		}
+
+
+		/**
+		 * Update from 1.0.0 to 1.0.1
+		 *
+		 * @since 1.0.1
+		 */
+		private function _update_1_0_1() {
+			global $wpdb;
+
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->wlfmc_offers}';" ) ) {
+				if ( ! $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->wlfmc_offers}` LIKE 'days';" ) ) {
+					$wpdb->query( "ALTER TABLE {$wpdb->wlfmc_offers} ADD `days` SMALLINT( 3 ) NULL DEFAULT 0;" );
+				}
+				if ( ! $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->wlfmc_offers}` LIKE 'product_id';" ) ) {
+					$wpdb->query( "ALTER TABLE {$wpdb->wlfmc_offers} ADD `product_id` BIGINT( 20 ) NULL;" );
+				}
+			}
+		}
 
 		/**
 		 * Add a page "Wishlist".

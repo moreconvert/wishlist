@@ -285,7 +285,7 @@
 
 .wlfmc_wishlist_table, .wlfmc_wishlist_table td, .wlfmc_wishlist_table th {
 	border: none !important;
-	text-align: center;
+	text-align: center ;
 }
 
 .wlfmc_wishlist_table thead th {
@@ -390,6 +390,7 @@
 	padding: 5px 10px !important;
 	border-radius: 10px !important;
 	font-size: 16px !important;
+	float:none !important
 }
 
 .wlfmc_wishlist_table .product-remove, .wlfmc_wishlist_table .product-checkbox {
@@ -482,7 +483,7 @@
 
 .wlfmc_wishlist_table .dateadded {
 	display: block;
-	margin-bottom: 5px;
+	margin-top: 5px;
 }
 
 .wlfmc_wishlist_footer > div {
@@ -505,7 +506,7 @@
 	font-size: 14px;
 	min-width: 175px;
 	font-weight: normal;
-	margin: 5px;
+	margin: 5px !important;
 	border: none !important;;
 	box-shadow: none;
 	box-sizing: border-box;
@@ -767,6 +768,7 @@
 	padding: 0 15px;
 	min-width: 48%;
 	margin: 5px 1%;
+	white-space: nowrap;
 }
 
 .wlfmc-popup-header {
@@ -932,7 +934,6 @@
 	left: auto;
 	right: -10px;
 }
-
 
 /* =================================================== TOASTR  ================================================*/
 

@@ -4,7 +4,7 @@
  *
  * @author MoreConvert
  * @package Smart Wishlist For More Convert
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +22,8 @@ if ( ! class_exists( 'WLFMC_Shortcode' ) ) {
 		 * Init shortcodes available for the plugin
 		 *
 		 * @return void
+		 *
+		 * @version 1.0.1
 		 */
 		public static function init() {
 			// register shortcodes.
@@ -273,6 +275,8 @@ if ( ! class_exists( 'WLFMC_Shortcode' ) ) {
 		 * @param string $content Shortcode content (usually empty)
 		 *
 		 * @return string
+		 *
+		 * @version 1.0.1
 		 */
 		public static function add_to_wishlist( $atts, $content = null ) {
 			global $product;
@@ -302,13 +306,26 @@ if ( ! class_exists( 'WLFMC_Shortcode' ) ) {
 			$product_added                  = $options->get_option( 'product_added_text', __( 'Product added!', 'wc-wlfmc-wishlist' ) );
 			$loop_position                  = $options->get_option( 'loop_position', 'after_add_to_cart' );
 			$single_position                = $options->get_option( 'wishlist_button_position', 'after_add_to_cart' );
-			$button_label_add               = $options->get_option( 'button_label_add', __( 'add to wishlist', 'wc-wlfmc-wishlist' ) );
-			$button_label_view              = $options->get_option( 'button_label_view', __( 'view my wishlist', 'wc-wlfmc-wishlist' ) );
 			$button_label_remove            = __( 'remove from list', 'wc-wlfmc-wishlist' );
-			$seperate_icon_and_text         = $options->get_option( 'seperate_icon_and_text', false );
-			$button_type                    = $options->get_option( 'button_type', 'icon' );
-			$flash_icon                     = $options->get_option( 'flash_icon', false );
-			$button_theme                   = $options->get_option( 'button_theme', true );
+			$is_single = isset( $atts['is_single'] ) ? $atts['is_single'] : wlfmc_is_single();
+
+			if($is_single) {
+				$button_label_add               = $options->get_option( 'button_label_add_single', __( 'Add to wishlist', 'wc-wlfmc-wishlist' ) );
+				$button_label_view              = $options->get_option( 'button_label_view_single', __( 'View my wishlist', 'wc-wlfmc-wishlist' ) );
+				$seperate_icon_and_text         = $options->get_option( 'seperate_icon_and_text_single', false );
+				$button_type                    = $options->get_option( 'button_type_single', 'icon' );
+				$flash_icon                     = $options->get_option( 'flash_icon_single', false );
+				$button_theme                   = $options->get_option( 'button_theme_single', true );
+
+			}else {
+				$button_label_add               = $options->get_option( 'button_label_add_loop', __( 'Add to wishlist', 'wc-wlfmc-wishlist' ) );
+				$button_label_view              = $options->get_option( 'button_label_view_loop', __( 'vView my wishlist', 'wc-wlfmc-wishlist' ) );
+				$seperate_icon_and_text         = $options->get_option( 'seperate_icon_and_text_loop', false );
+				$button_type                    = $options->get_option( 'button_type_loop', 'icon' );
+				$flash_icon                     = false;
+				$button_theme                   = $options->get_option( 'button_theme_loop', true );
+
+			}
 
 			// button label.
 			$label = apply_filters( 'wlfmc_button_add_label', $button_label_add );
@@ -318,7 +335,7 @@ if ( ! class_exists( 'WLFMC_Shortcode' ) ) {
 			$added_icon = apply_filters( 'wlfmc_button_added_icon', 'heart-o' );
 
 			// button class.
-			$is_single = isset( $atts['is_single'] ) ? $atts['is_single'] : wlfmc_is_single();
+
 			$classes   = apply_filters( 'wlfmc_add_to_wishlist_button_classes', 'add_to_wishlist single_add_to_wishlist button alt' );
 
 			if ( ( 'all' === $who_can_see_wishlist_options && true == $force_user_to_login && ! is_user_logged_in() ) ) {
@@ -337,6 +354,8 @@ if ( ! class_exists( 'WLFMC_Shortcode' ) ) {
 			$container_classes = $exists ? 'exists' : '';
 			$found_in_list     = $exists ? wlfmc_get_wishlist( false ) : false;
 			$found_item        = $found_in_list ? $found_in_list->get_product( $current_product_id ) : false;
+
+			$container_classes .= $is_single ? ' wlfmc-single-btn' : ' wlfmc-loop-btn';
 
 
 			if ( ( $loop_position === 'before_image' && ! $is_single ) || ( $single_position === 'thumbnails' && $is_single ) ) {
@@ -426,8 +445,14 @@ if ( ! class_exists( 'WLFMC_Shortcode' ) ) {
 				$popup_size         = $options->get_option( 'popup_size', 'small' );
 				$popup_image        = $options->get_option( 'popup_image' );
 				$popup_image_size   = $options->get_option( 'popup_image_size', 'medium' );
+				$popup_image_width  = $options->get_option( 'popup_image_width' );
+				$popup_image_height = $options->get_option( 'popup_image_height' );
 				$buttons            = $options->get_option( 'popup_buttons' );
 				$use_featured_image = $options->get_option( 'use_featured_image' );
+				$popup_image_size   = ( 'manual' === $popup_image_size && '' != $popup_image_width && '' != $popup_image_height ) ? array(
+					$popup_image_width,
+					$popup_image_height
+				) : $popup_image_size;
 				$image_attributes   = wp_get_attachment_image_src( $popup_image, $popup_image_size );
 				$image_attributes   = ( true == $use_featured_image ) ? wp_get_attachment_image_src( $current_product->get_image_id() ) : $image_attributes;
 				$popup_image_src    = $image_attributes ? $image_attributes[0] : '';

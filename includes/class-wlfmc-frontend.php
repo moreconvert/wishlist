@@ -4,7 +4,7 @@
  *
  * @author MoreConvert
  * @package Smart Wishlist For More Convert
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 
@@ -413,6 +413,9 @@ if ( ! class_exists( 'WLFMC_Frontend' ) ) {
 		 * Return localize array
 		 *
 		 * @return array Array with variables to be localized inside js
+		 *
+		 * @version 1.0.1
+		 * @since 1.0.0
 		 */
 		public function get_localize() {
 			return apply_filters(
@@ -462,6 +465,8 @@ if ( ! class_exists( 'WLFMC_Frontend' ) ) {
 		 * @param array $rules Array of additional rules to add to default ones.
 		 *
 		 * @return string Generated CSS code
+		 *
+		 * @version 1.0.1
 		 */
 		protected function build_custom_css( $rules = array() ) {
 			$generated_code = '';
@@ -516,8 +521,8 @@ if ( ! class_exists( 'WLFMC_Frontend' ) ) {
 								'click_wishlist_button_behavior' => 'open-popup',
 							),
 						),
-						'icon_style'             => array(
-							'selector' => '.woocommerce .wlfmc-add-button > a i',
+						'icon_style_single'             => array(
+							'selector' => '.woocommerce .wlfmc-single-btn .wlfmc-add-button > a i',
 							'rules'    => array(
 								'background'       => array(
 									'rule'    => 'background-color: %1$s; background: %1$s',
@@ -549,8 +554,8 @@ if ( ! class_exists( 'WLFMC_Frontend' ) ) {
 							),
 							'deps'     => array(),
 						),
-						'text_style'             => array(
-							'selector' => '.woocommerce .wlfmc-add-button > a',
+						'text_style_single'             => array(
+							'selector' => '.woocommerce .wlfmc-single-btn .wlfmc-add-button > a',
 							'rules'    => array(
 								'background'       => array(
 									'rule'    => 'background-color: %1$s; background: %1$s',
@@ -582,9 +587,8 @@ if ( ! class_exists( 'WLFMC_Frontend' ) ) {
 							),
 							'deps'     => array(),
 						),
-						'seperator_color'        =>
-							array(
-								'selector' => '.woocommerce .wlfmc-add-button > a.have-sep span',
+						'seperator_color_single'        => array(
+								'selector' => '.woocommerce .wlfmc-single-btn  .wlfmc-add-button > a.have-sep span',
 								'rules'    => array(
 									'rule'    => 'background-color: %s',
 									'default' => '#ccc',
@@ -592,6 +596,162 @@ if ( ! class_exists( 'WLFMC_Frontend' ) ) {
 								),
 								'deps'     => array(),
 							),
+						'icon_font_size_single'         => array(
+							'selector' => '.woocommerce .wlfmc-single-btn  .wlfmc-add-button > a i',
+							'rules'    => array(
+								'rule'    => 'font-size: %s',
+								'default' => '14px',
+							),
+							'deps'     => array(),
+						),
+						'text_font_size_single'         => array(
+							'selector' => '.woocommerce .wlfmc-single-btn  .wlfmc-add-button > a',
+							'rules'    => array(
+								'rule'    => 'font-size: %s',
+								'default' => '14px',
+							),
+							'deps'     => array(),
+						),
+						'button_line_height_single'     => array(
+							'selector' => '.woocommerce .wlfmc-single-btn  .wlfmc-add-button > a',
+							'rules'    => array(
+								'rule'    => 'line-height: %s',
+								'default' => 'inherit',
+							),
+							'deps'     => array(),
+						),
+						'button_width_single'     => array(
+							'selector' => '.woocommerce .wlfmc-single-btn  .wlfmc-add-button > a',
+							'rules'    => array(
+								'rule'    => 'height: %s',
+								'default' => 'auto',
+							),
+							'deps'     => array(),
+						),
+						'button_height_single'     => array(
+							'selector' => '.woocommerce .wlfmc-single-btn  .wlfmc-add-button > a',
+							'rules'    => array(
+								'rule'    => 'width: %s',
+								'default' => 'auto',
+							),
+							'deps'     => array(),
+						),
+
+						'icon_style_loop'             => array(
+							'selector' => '.woocommerce .wlfmc-loop-btn .wlfmc-add-button > a i',
+							'rules'    => array(
+								'background'       => array(
+									'rule'    => 'background-color: %1$s; background: %1$s',
+									'default' => 'transparent',
+								),
+								'background-hover' => array(
+									'rule'    => 'background-color: %1$s; background: %1$s',
+									'default' => '#f5f5f5',
+									'status'  => ':hover',
+								),
+								'color'            => array(
+									'rule'    => 'color: %s',
+									'default' => '#333',
+								),
+								'color-hover'      => array(
+									'rule'    => 'color: %s',
+									'default' => '#ccc',
+									'status'  => ':hover',
+								),
+								'border'           => array(
+									'rule'    => 'border-color: %s',
+									'default' => '#333',
+								),
+								'border-hover'     => array(
+									'rule'    => 'border-color: %s',
+									'default' => '#ccc',
+									'status'  => ':hover',
+								),
+							),
+							'deps'     => array(),
+						),
+						'text_style_loop'             => array(
+							'selector' => '.woocommerce .wlfmc-loop-btn .wlfmc-add-button > a',
+							'rules'    => array(
+								'background'       => array(
+									'rule'    => 'background-color: %1$s; background: %1$s',
+									'default' => 'transparent',
+								),
+								'background-hover' => array(
+									'rule'    => 'background-color: %1$s; background: %1$s',
+									'default' => '#f5f5f5',
+									'status'  => ':hover',
+								),
+								'color'            => array(
+									'rule'    => 'color: %s',
+									'default' => '#333',
+								),
+								'color-hover'      => array(
+									'rule'    => 'color: %s',
+									'default' => '#ccc',
+									'status'  => ':hover',
+								),
+								'border'           => array(
+									'rule'    => 'border-color: %s',
+									'default' => '#333',
+								),
+								'border-hover'     => array(
+									'rule'    => 'border-color: %s',
+									'default' => '#ccc',
+									'status'  => ':hover',
+								),
+							),
+							'deps'     => array(),
+						),
+						'seperator_color_loop'        => array(
+							'selector' => '.woocommerce .wlfmc-loop-btn  .wlfmc-add-button > a.have-sep span',
+							'rules'    => array(
+								'rule'    => 'background-color: %s',
+								'default' => '#ccc',
+								'status'  => ':before',
+							),
+							'deps'     => array(),
+						),
+						'icon_font_size_loop'         => array(
+							'selector' => '.woocommerce .wlfmc-loop-btn  .wlfmc-add-button > a i',
+							'rules'    => array(
+								'rule'    => 'font-size: %s',
+								'default' => '14px',
+							),
+							'deps'     => array(),
+						),
+						'text_font_size_loop'         => array(
+							'selector' => '.woocommerce .wlfmc-loop-btn  .wlfmc-add-button > a',
+							'rules'    => array(
+								'rule'    => 'font-size: %s',
+								'default' => '14px',
+							),
+							'deps'     => array(),
+						),
+						'button_line_height_loop'     => array(
+							'selector' => '.woocommerce .wlfmc-loop-btn  .wlfmc-add-button > a',
+							'rules'    => array(
+								'rule'    => 'line-height: %s',
+								'default' => 'inherit',
+							),
+							'deps'     => array(),
+						),
+						'button_width_loop'     => array(
+							'selector' => '.woocommerce .wlfmc-loop-btn  .wlfmc-add-button > a',
+							'rules'    => array(
+								'rule'    => 'height: %s',
+								'default' => 'auto',
+							),
+							'deps'     => array(),
+						),
+						'button_height_loop'     => array(
+							'selector' => '.woocommerce .wlfmc-loop-btn  .wlfmc-add-button > a',
+							'rules'    => array(
+								'rule'    => 'width: %s',
+								'default' => 'auto',
+							),
+							'deps'     => array(),
+						),
 					),
 					$rules
 				)
@@ -601,29 +761,60 @@ if ( ! class_exists( 'WLFMC_Frontend' ) ) {
 				return $generated_code;
 			}
 			$options                        = new MCT_Options( 'wlfmc_options' );
-			$button_theme                   = $options->get_option( 'button_theme', true );
-			$loop_position                  = $options->get_option( 'loop_position', 'after_add_to_cart' );
-			$single_position                = $options->get_option( 'wishlist_button_position', 'after_add_to_cart' );
-			$is_single                      = wlfmc_is_single();
+			$button_theme_single                   = $options->get_option( 'button_theme_single', true );
+			$button_theme_loop                   = $options->get_option( 'button_theme_loop', true );
+
 			$click_wishlist_button_behavior = $options->get_option( 'click_wishlist_button_behavior', 'just-add' );
-			$seperate_icon_and_text         = $options->get_option( 'seperate_icon_and_text', false );
-			$button_type                    = $options->get_option( 'button_type', 'icon' );
 
-			if ( true != $seperate_icon_and_text || 'both' != $button_type ) {
-				if ( isset( $rules['seperator_color'] ) ) {
-					unset( $rules['seperator_color'] );
+			if ( true == $button_theme_single ) {
+				if ( isset( $rules['button_width_single'] ) ) {
+					unset( $rules['button_width_single'] );
+				}
+				if ( isset( $rules['button_height_single'] ) ) {
+					unset( $rules['button_height_single'] );
+				}
+				if ( isset( $rules['button_line_height_single'] ) ) {
+					unset( $rules['button_line_height_single'] );
+				}
+				if ( isset( $rules['icon_style_single'] ) ) {
+					unset( $rules['icon_style_single'] );
+				}
+				if ( isset( $rules['text_style_single'] ) ) {
+					unset( $rules['text_style_single'] );
+				}
+				if ( isset( $rules['text_font_size_single'] ) ) {
+					unset( $rules['text_font_size_single'] );
+				}
+				if ( isset( $rules['icon_font_size_single'] ) ) {
+					unset( $rules['icon_font_size_single'] );
+				}
+			}
+			if ( true == $button_theme_loop ) {
+				if ( isset( $rules['button_width_loop'] ) ) {
+					unset( $rules['button_width_loop'] );
+				}
+				if ( isset( $rules['button_height_loop'] ) ) {
+					unset( $rules['button_height_loop'] );
+				}
+				if ( isset( $rules['button_line_height_loop'] ) ) {
+					unset( $rules['button_line_height_loop'] );
+				}
+				if ( isset( $rules['icon_style_loop'] ) ) {
+					unset( $rules['icon_style_loop'] );
+				}
+				if ( isset( $rules['text_style_loop'] ) ) {
+					unset( $rules['text_style_loop'] );
+				}
+				if ( isset( $rules['text_font_size_loop'] ) ) {
+					unset( $rules['text_font_size_loop'] );
+				}
+				if ( isset( $rules['icon_font_size_loop'] ) ) {
+					unset( $rules['icon_font_size_loop'] );
 				}
 			}
 
-			if ( true == $button_theme || ( $loop_position === 'before_image' && ! $is_single ) || ( $single_position === 'thumbnails' && $is_single ) ) {
 
-				if ( isset( $rules['icon_style'] ) ) {
-					unset( $rules['icon_style'] );
-				}
-				if ( isset( $rules['text_style'] ) ) {
-					unset( $rules['text_style'] );
-				}
-			}
+
 			if ( 'open-popup' != $click_wishlist_button_behavior ) {
 				if ( isset( $rules['popup_buttons'] ) ) {
 					unset( $rules['popup_buttons'] );
